@@ -28,3 +28,19 @@ result = authorization_client.role_assignments.create(scope=scope, role_assignme
 
 # Print the result
 print(result)
+
+
+client = ResourceManagementClient(credential, subscription_id)
+
+# Define the tags you want to create
+tags = {
+    'environment': 'dev',
+    'project': 'my_project'
+}
+
+# Create the tags on the subscription
+client.tags.create_or_update(
+    resource_group_name='<resource_group_name>',
+    tag_name='<tag_name>',
+    parameters=tags
+)
