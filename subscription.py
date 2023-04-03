@@ -89,7 +89,34 @@ def create_tags():
     pass
 
 def assign_rbac_aad():
-    pass
+    from azure.identity import DefaultAzureCredential
+    from azure.mgmt.authorization import AuthorizationManagementClient
+    from azure.mgmt.authorization.models import RoleAssignmentCreateParameters
+
+    # Set your Azure subscription ID and resource group name
+    subscription_id = 'your_subscription_id'
+    resource_group_name = 'your_resource_group_name'
+
+    # Set the AAD group object ID and the RBAC role you want to assign
+    aad_group_object_id = 'your_aad_group_object_id'
+    rbac_role_id = '/subscriptions/' + subscription_id + '/providers/Microsoft.Authorization/roleDefinitions/<role_id>'
+
+    # Authenticate with Azure using the default credentials
+    credential = DefaultAzureCredential()
+
+    # Create an Authorization Management client
+    auth_client = AuthorizationManagementClient(credential, subscription_id)
+
+    # Create a RoleAssignmentCreateParameters object to represent the role assignment
+    role_assignment_params = RoleAssignmentCreateParameters(role_definition_id=rbac_role_id, principal_id=aad_group_object_id)
+
+    try:
+        # Assign the role to the AAD group
+        auth_client.role_assignments.create(resource_group_name, 'subscriptions/' + subscription_id, '', '', role_assignment_params)
+        print("Role assignment successful.")
+    except Exception as ex:
+        print("An error occurred while assigning the role: ", ex)
+
 
 def assign_rbac_sp():
     pass
