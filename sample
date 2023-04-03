@@ -1,0 +1,30 @@
+from azure.identity import DefaultAzureCredential
+from azure.mgmt.authorization import AuthorizationManagementClient
+from azure.mgmt.authorization.models import RoleAssignmentCreateParameters
+
+# Set the credentials to authenticate to Azure
+credential = DefaultAzureCredential()
+
+# Set the subscription ID where the AAD group and RBAC role exist
+subscription_id = '<subscription_id>'
+
+# Set the AAD group object ID
+group_object_id = '<group_object_id>'
+
+# Set the scope of the RBAC role assignment
+scope = '<scope>'
+
+# Set the ID of the RBAC role to assign
+role_id = '/subscriptions/{}/providers/Microsoft.Authorization/roleDefinitions/<role_id>'.format(subscription_id)
+
+# Create the AuthorizationManagementClient object
+authorization_client = AuthorizationManagementClient(credential, subscription_id)
+
+# Create the RoleAssignmentCreateParameters object
+parameters = RoleAssignmentCreateParameters(role_definition_id=role_id, principal_id=group_object_id)
+
+# Assign the RBAC role to the AAD group
+result = authorization_client.role_assignments.create(scope=scope, role_assignment_name='<role_assignment_name>', parameters=parameters)
+
+# Print the result
+print(result)
