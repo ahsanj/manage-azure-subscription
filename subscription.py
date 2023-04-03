@@ -85,7 +85,14 @@ def create_resource_group():
     except Exception as e:
         print(f"An error occurred: {e}")
         
+def create_tags():
+    pass
 
+def assign_rbac_aad():
+    pass
+
+def assign_rbac_sp():
+    pass
     
     
 def main():
@@ -96,17 +103,20 @@ def main():
         print("2. Move Subscriptions ")
         print("3. Create Resource Group")
         print("4. Create Vnet")
-        print("5. Exit")
+        print("5. Create tags on the Subscription")
+        print("6. Assign RBAC permisisons to AAD Group")
+        print("7. Assign RBAC permisisons to Service principal")
+        print("8. Exit")
         while True:
             try:
                 choice = input("Enter your choice: ")
                 choice = int(choice)
-                if choice in range(1, 6):
+                if choice in range(1, 9):
                     return str(choice)
                 else:
-                    print("Invalid choice. Please enter a number between 1 and 5.")
+                    print("Invalid choice. Please enter a number between 1 and 8.")
             except ValueError:
-                print("Invalid input. Please enter a number between 1 and 5.")
+                print("Invalid input. Please enter a number between 1 and 8.")
 
     def list_sub():
         list_subscriptions()
@@ -119,19 +129,33 @@ def main():
     
     def vnet():
         create_vnet()
+    
+    def tag():
+        create_tags()
+    
+    def assign_aad():
+        assign_rbac_aad()
+        
+    def assign_sp():
+        assign_rbac_sp()
+        
+    
 
     options = {
         "1": list_sub,
         "2": move_sub,
         "3": resource_grp,
         "4": vnet,
-        "5": lambda: print("Exiting...")
+        "5": tag,
+        "6": assign_aad,
+        "7": assign_sp,
+        "8": lambda: print("Exiting...")
     }
 
     while True:
         choice = main_menu()
         options.get(choice)()
-        if choice == "5":
+        if choice == "8":
             break
 
 if __name__ == "__main__":
