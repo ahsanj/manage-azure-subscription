@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
 import config
 import sys
+import uuid
 from azure.mgmt.managementgroups import ManagementGroupsAPI
 from azure.identity import AzureCliCredential
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.resource.subscriptions import SubscriptionClient
 from azure.mgmt.network import NetworkManagementClient
 from azure.mgmt.network.models import AddressSpace , VirtualNetwork
+from azure.mgmt.authorization import AuthorizationManagementClient
+from azure.mgmt.authorization.v2018_09_01_preview.models import RoleAssignmentCreateParameters
+from azure.core.exceptions import HttpResponseError
+#from azure.mgmt.authorization import RoleAssignmentCreateParameters
+
+
 
 # class AzureCredentials:
 #     def __init__(self):
@@ -86,41 +93,49 @@ def create_resource_group():
         print(f"An error occurred: {e}")
         
 def create_tags():
-    pass
+    try:
+        client = ResourceManagementClient(credential, config.subscription_id)
+        resource_group_params = {'location':'East US'}
+        resource_group_params.update(tags=config.tags)
+        client.resource_groups.update(config.resource_group_name, resource_group_params)        
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        
 
 def assign_rbac_aad():
-    from azure.identity import DefaultAzureCredential
-    from azure.mgmt.authorization import AuthorizationManagementClient
-    from azure.mgmt.authorization.models import RoleAssignmentCreateParameters
 
-    # Set your Azure subscription ID and resource group name
-    subscription_id = 'your_subscription_id'
-    resource_group_name = 'your_resource_group_name'
 
-    # Set the AAD group object ID and the RBAC role you want to assign
     aad_group_object_id = 'your_aad_group_object_id'
-    rbac_role_id = '/subscriptions/' + subscription_id + '/providers/Microsoft.Authorization/roleDefinitions/<role_id>'
+    rbac_role_id = '/subscriptions/' + config.subscription_id + '/providers/Microsoft.Authorization/roleDefinitions/<role_id>'
 
-    # Authenticate with Azure using the default credentials
-    credential = DefaultAzureCredential()
-
+    
     # Create an Authorization Management client
-    auth_client = AuthorizationManagementClient(credential, subscription_id)
+    auth_client = AuthorizationManagementClient(credential, config.subscription_id)
 
     # Create a RoleAssignmentCreateParameters object to represent the role assignment
     role_assignment_params = RoleAssignmentCreateParameters(role_definition_id=rbac_role_id, principal_id=aad_group_object_id)
 
     try:
         # Assign the role to the AAD group
-        auth_client.role_assignments.create(resource_group_name, 'subscriptions/' + subscription_id, '', '', role_assignment_params)
+        auth_client.role_assignments.create(config.resource_group_name, 'subscriptions/' + config.subscription_id, '', '', role_assignment_params)
         print("Role assignment successful.")
     except Exception as ex:
         print("An error occurred while assigning the role: ", ex)
 
 
 def assign_rbac_sp():
-    pass
-    
+    auth_client = AuthorizationManagementClient(credential, config.subscription_id)
+    role_definition_id = '/subscriptions/' + config.subscription_id + '/providers/Microsoft.Authorization/roleDefinitions/'+ config.role_definition_id_sp
+    principal_id = config.principal_id_sp
+    scope = '/subscriptions/' + config.subscription_id
+    role_assignment_params = RoleAssignmentCreateParameters(role_definition_id=role_definition_id, 
+                                                            principal_id=principal_id)
+    try:
+        role_assignment = auth_client.role_assignments.create(scope, uuid.uuid4(), role_assignment_params)
+        print("Role assignment created successfully.")
+    except HttpResponseError as ex:
+        print("Failed to create role assignment: {}".format(ex.message))
+        
     
 def main():
     
