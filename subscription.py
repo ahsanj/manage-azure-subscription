@@ -103,24 +103,7 @@ def create_tags():
         
 
 def assign_rbac_aad():
-
-
-    aad_group_object_id = 'your_aad_group_object_id'
-    rbac_role_id = '/subscriptions/' + config.subscription_id + '/providers/Microsoft.Authorization/roleDefinitions/<role_id>'
-
-    
-    # Create an Authorization Management client
-    auth_client = AuthorizationManagementClient(credential, config.subscription_id)
-
-    # Create a RoleAssignmentCreateParameters object to represent the role assignment
-    role_assignment_params = RoleAssignmentCreateParameters(role_definition_id=rbac_role_id, principal_id=aad_group_object_id)
-
-    try:
-        # Assign the role to the AAD group
-        auth_client.role_assignments.create(config.resource_group_name, 'subscriptions/' + config.subscription_id, '', '', role_assignment_params)
-        print("Role assignment successful.")
-    except Exception as ex:
-        print("An error occurred while assigning the role: ", ex)
+    pass
 
 
 def assign_rbac_sp():
