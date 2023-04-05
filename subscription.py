@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import config
-import sys
 import uuid
 from azure.mgmt.managementgroups import ManagementGroupsAPI
 from azure.identity import AzureCliCredential
@@ -42,13 +41,14 @@ def move_subscription():
     try:
         print("Enabling the SecurityInsights before moving the subscription")
         enable_resource_provider()
+        rename_subscription()
         mgmt_group_client = ManagementGroupsAPI(credential)
         mgmt_group_client.management_group_subscriptions.create(group_id=config.management_group_id,
                                                                 subscription_id=config.subscription_id)
         print('Subscription {} has been moved to management group {}.'.format(config.subscription_id, config.management_group_id))       
     except Exception as e:
         print(f"An error occurred: {e}")
-
+        
 def enable_resource_provider():
     try:
         resource_client = ResourceManagementClient(credential,config.subscription_id)
@@ -56,7 +56,10 @@ def enable_resource_provider():
         resource_client.providers.register(resource_provider)
     except Exception as e:
         print(f"An error occurred: {e}")
-    
+
+def rename_subscription():
+    pass
+
 def create_vnet():
     try:
         resource_group_name = config.resource_group_name 
@@ -104,8 +107,11 @@ def create_tags():
                                                             } 
                                                         }
                                                     )
+        print('Tags created successfully!')
     except Exception as e:
         print('Error creating tags:', e)
+    else:
+        print('Tags have been created successfully on the subscription with ID:', config.subscription_id)
 
 def assign_rbac_aad():
     pass
