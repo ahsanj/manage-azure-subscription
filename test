@@ -3,16 +3,15 @@ import config
 import uuid
 from azure.mgmt.managementgroups import ManagementGroupsAPI
 from azure.identity import AzureCliCredential
-from azure.identity import DefaultAzureCredential
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.resource.subscriptions import SubscriptionClient
+from azure.mgmt.subscription import SubscriptionClient
 from azure.mgmt.network import NetworkManagementClient
 from azure.mgmt.network.models import AddressSpace , VirtualNetwork
 from azure.mgmt.authorization import AuthorizationManagementClient
 from azure.mgmt.authorization.v2018_09_01_preview.models import RoleAssignmentCreateParameters
 from azure.core.exceptions import HttpResponseError
 #from azure.mgmt.authorization import RoleAssignmentCreateParameters
-from azure.mgmt.subscription.operations import SubscriptionOperations
 
 
 
@@ -33,8 +32,10 @@ def list_subscriptions():
     try:
         subscription_client = SubscriptionClient(credential)
         subscriptions = subscription_client.subscriptions.list()
+        count=0
         for sub in subscriptions:
-            border_msg(f"Name: {sub.display_name} ID: {sub.subscription_id}")
+            count+=1
+            border_msg(f"{count}- Name: {sub.display_name} ID: {sub.subscription_id}")
     except Exception as e:
         print(f"An error occurred: {e}")
         
@@ -42,6 +43,8 @@ def move_subscription():
     try:
         print("Enabling the SecurityInsights before moving the subscription")
         enable_resource_provider()
+        if config.subscription_display_name != "":
+            rename_subscription()
         print("Moving the subscription")
         mgmt_group_client = ManagementGroupsAPI(credential)
         mgmt_group_client.management_group_subscriptions.create(group_id=config.management_group_id,
@@ -59,14 +62,14 @@ def enable_resource_provider():
         print(f"An error occurred: {e}")
 
 def rename_subscription():
-    print("Updating the name of subscription name")
+    print("Changing the name of subscription name to", config.subscription_display_name)
     client = SubscriptionClient(credential)
-    subscription_ops = SubscriptionOperations(client)
-
-    print(subscription_ops)
-
-    #subscription_ops.rename(subscription_id="745b7567-e34c-46be-98c1-2b1c897d5a00", name="ahsan-test1123")
-    print("name is updated")
+    try:
+        client.subscription.rename(subscription_id=config.subscription_id,
+                               body={"subscriptionName": config.subscription_display_name},
+                               )
+    except Exception as e:
+        print(f"An error occurred: {e}")
     
 def create_vnet():
     try:
@@ -155,8 +158,8 @@ def assign_rbac_sp():
         
     
 def main():
-    
     def main_menu():
+        print("\n")
         print("Welcome to the Main Menu")
         print("1. List Subscriptions")
         print("2. Move Subscriptions ")
@@ -224,4 +227,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
