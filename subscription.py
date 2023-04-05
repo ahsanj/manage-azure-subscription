@@ -12,6 +12,8 @@ from azure.mgmt.authorization import AuthorizationManagementClient
 from azure.mgmt.authorization.v2018_09_01_preview.models import RoleAssignmentCreateParameters
 from azure.core.exceptions import HttpResponseError
 #from azure.mgmt.authorization import RoleAssignmentCreateParameters
+from azure.mgmt.resource.resources.models import TagValue
+
 
 
 
@@ -94,13 +96,16 @@ def create_resource_group():
         
 def create_tags():
     try:
-        client = ResourceManagementClient(credential, config.subscription_id)
-        resource_group_params = {'location':'East US'}
-        resource_group_params.update(tags=config.tags)
-        client.resource_groups.update(config.resource_group_name, resource_group_params)        
+        resource_client = ResourceManagementClient(credential, config.subscription_id)
+        resource_client.tags.create_or_update_at_scope(scope=f"/subscriptions/{config.subscription_id}",
+                                                    parameters={
+                                                    "properties": {
+                                                        "tags": config.tags
+                                                            } 
+                                                        }
+                                                    )
     except Exception as e:
-        print(f"An error occurred: {e}")
-        
+        print('Error creating tags:', e)
 
 def assign_rbac_aad():
     pass
