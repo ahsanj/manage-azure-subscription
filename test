@@ -1,229 +1,39 @@
-#!/usr/bin/env python3
-import config
-import uuid
-from azure.mgmt.managementgroups import ManagementGroupsAPI
-from azure.identity import AzureCliCredential
-from azure.mgmt.resource import ResourceManagementClient
-from azure.mgmt.resource.subscriptions import SubscriptionClient
-from azure.mgmt.subscription import SubscriptionClient
-from azure.mgmt.network import NetworkManagementClient
-from azure.mgmt.network.models import AddressSpace , VirtualNetwork
-from azure.mgmt.authorization import AuthorizationManagementClient
-from azure.mgmt.authorization.v2018_09_01_preview.models import RoleAssignmentCreateParameters
-from azure.core.exceptions import HttpResponseError
-#from azure.mgmt.authorization import RoleAssignmentCreateParameters
+Certainly! Here's an improved diagram illustrating the relationship between resources, system-assigned identities, and user-assigned identities in Azure:
 
 
+- The Azure Resource represents a resource in Azure, such as a virtual machine, Azure function, or any other service.
+- The System-Assigned Identity is associated with the Azure Resource, indicated by the connection between them. This identity is managed by Azure and tied to the lifecycle of the resource.
+- User-Assigned Identity 1 and User-Assigned Identity 2 are separate identities that can be created independently of any specific resource.
+- Both User-Assigned Identities can be assigned to multiple Azure Resources, as shown by the connections between the identities and the Azure Resource boxes.
+- Each User-Assigned Identity provides the associated Azure Resource(s) with the ability to authenticate and access other Azure resources using the assigned identity.
 
+This diagram visually represents the relationships between the resources and identities, showcasing the decoupled nature of user-assigned identities from specific resources while still providing authentication capabilities.
 
-# class AzureCredentials:
-#     def __init__(self):
-#         self.credential = DefaultAzureCredential()
+Note: The diagram is a simplified representation, and in practice, there can be multiple resources associated with a single identity and vice versa. The diagram aims to illustrate the concepts of system-assigned and user-assigned identities and their relationships.
 
-credential = AzureCliCredential()
-
-def border_msg(msg):
-    row = len(msg)
-    h = ''.join(['+'] + ['-' *row] + ['+'])
-    result= h + '\n'"|"+msg+"|"'\n' + h
-    print(result)
-
-def list_subscriptions():
-    try:
-        subscription_client = SubscriptionClient(credential)
-        subscriptions = subscription_client.subscriptions.list()
-        count=0
-        for sub in subscriptions:
-            count+=1
-            border_msg(f"{count}- Name: {sub.display_name} ID: {sub.subscription_id}")
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        
-def move_subscription():
-    try:
-        print("Enabling the SecurityInsights before moving the subscription")
-        enable_resource_provider()
-        if config.subscription_display_name != "":
-            rename_subscription()
-        print("Moving the subscription")
-        mgmt_group_client = ManagementGroupsAPI(credential)
-        mgmt_group_client.management_group_subscriptions.create(group_id=config.management_group_id,
-                                                                subscription_id=config.subscription_id)
-        print('Subscription {} has been moved to management group {}.'.format(config.subscription_id, config.management_group_id))       
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        
-def enable_resource_provider():
-    try:
-        resource_client = ResourceManagementClient(credential,config.subscription_id)
-        resource_provider = 'Microsoft.SecurityInsights'
-        resource_client.providers.register(resource_provider)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-def rename_subscription():
-    print("Changing the name of subscription name to", config.subscription_display_name)
-    client = SubscriptionClient(credential)
-    try:
-        client.subscription.rename(subscription_id=config.subscription_id,
-                               body={"subscriptionName": config.subscription_display_name},
-                               )
-    except Exception as e:
-        print(f"An error occurred: {e}")
     
-def create_vnet():
-    try:
-        resource_group_name = config.resource_group_name 
-        vnet_name = config.vnet_name
-        vnet_cidr = config.vnet_cidr
-        network_client = NetworkManagementClient(credential=credential, subscription_id=config.subscription_id)
-        
-        vnet_params = VirtualNetwork(
-        location="eastus",
-        address_space=AddressSpace(
-            address_prefixes=[vnet_cidr],
-            ),
-        )
-        # if Resource provider 'Microsoft.Network' is not enabled the following operation will also enable it
-        vnet_result = network_client.virtual_networks.begin_create_or_update(
-        resource_group_name=resource_group_name,
-        virtual_network_name=vnet_name,
-        parameters=vnet_params,
-        )
-        print(f"Virtual network '{vnet_result.result().name}' created.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
-    
+    Certainly! Here are more details and a diagram to further illustrate the concepts of system-assigned and user-assigned identities in Azure:
 
-def create_resource_group():
-    try:
-        resource_client = ResourceManagementClient(credential, config.subscription_id)
-        if resource_client.resource_groups.check_existence(config.resource_group_name):
-            print("Resource group '{0}' already exists. Script stopped.".format(config.resource_group_name))
-            exit()
-        rg_result = resource_client.resource_groups.create_or_update(
-        config.resource_group_name, {"location": "eastus"}
-        )
-        print(f"Provisioned resource group {rg_result.name} in the {rg_result.location} region")
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        
-def create_tags():
-    try:
-        resource_client = ResourceManagementClient(credential, config.subscription_id)
-        resource_client.tags.create_or_update_at_scope(scope=f"/subscriptions/{config.subscription_id}",
-                                                    parameters={
-                                                    "properties": {
-                                                        "tags": config.tags
-                                                            } 
-                                                        }
-                                                    )
-        print('Tags created successfully!')
-    except Exception as e:
-        print('Error creating tags:', e)
-    else:
-        print('Tags have been created successfully on the subscription with ID:', config.subscription_id)
+System-Assigned Identity:
+- System-assigned identities are created and managed by Azure for a specific resource.
+- When you enable a system-assigned identity for a resource, Azure automatically creates an identity in Azure AD and associates it with that resource.
+- The system-assigned identity is tied to the lifecycle of the resource. If the resource is deleted, the system-assigned identity is also deleted.
+- The system-assigned identity is accessible only to the resource it is associated with and can be used by that resource to authenticate and access other Azure resources.
+- System-assigned identities are commonly used in scenarios where the resource needs to access other Azure services securely without managing and rotating credentials.
 
-def assign_rbac_aad():
-    try:
-        client = AuthorizationManagementClient(credential,subscription_id=config.subscription_id)
-        response = client.role_assignments.create(
-            scope="subscriptions/745b7567-e34c-46be-98c1-2b1c897d5a00/resourceGroups/rg_script",
-            role_assignment_name="05c5a614-a7d6-4502-b150-c2fb455033ff",
-            parameters={
-                "properties": {
-                    "principalId": "ce2ce14e-85d7-4629-bdbc-454d0519d987",
-                    "principalType": "User",
-                    "roleDefinitionId": "/subscriptions/745b7567-e34c-46be-98c1-2b1c897d5a00/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
-                }
-            },
-        )
-    except Exception as e:
-        print('failed to assign RBAC to AAD group:', e)
-           
+User-Assigned Identity:
+- User-assigned identities are standalone Azure AD objects that can be created independently and then assigned to one or more Azure resources.
+- To create a user-assigned identity, you create it as a separate Azure AD resource, and Azure AD assigns a unique identity to it.
+- User-assigned identities are decoupled from the lifecycle of any specific resource. They can be created, managed, and deleted independently of the resources they are assigned to.
+- User-assigned identities can be assigned to multiple resources, allowing for reuse across different resources or scenarios.
+- By assigning a user-assigned identity to a resource, that resource gains the capability to authenticate and access other Azure resources using the identity.
+- User-assigned identities provide more flexibility and control, as they can be managed separately from the resources and can be assigned to different resources as needed.
+
+Here is a diagram illustrating the relationship between resources, system-assigned identities, and user-assigned identities:
 
 
-def assign_rbac_sp():
-    auth_client = AuthorizationManagementClient(credential, config.subscription_id)
-    role_definition_id = '/subscriptions/' + config.subscription_id + '/providers/Microsoft.Authorization/roleDefinitions/'+ config.role_definition_id_sp
-    principal_id = config.principal_id_sp
-    scope = '/subscriptions/' + config.subscription_id
-    role_assignment_params = RoleAssignmentCreateParameters(role_definition_id=role_definition_id, 
-                                                            principal_id=principal_id)
-    try:
-        role_assignment = auth_client.role_assignments.create(scope, uuid.uuid4(), role_assignment_params)
-        print("Role assignment created successfully.")
-    except HttpResponseError as ex:
-        print("Failed to create role assignment: {}".format(ex.message))
-        
-    
-def main():
-    def main_menu():
-        print("\n")
-        print("Welcome to the Main Menu")
-        print("1. List Subscriptions")
-        print("2. Move Subscriptions ")
-        print("3. Rename the Subscription")
-        print("4. Create Resource Group")
-        print("5. Create Vnet")
-        print("6. Create tags on the Subscription")
-        print("7. Assign RBAC permisisons to AAD Group")
-        print("8. Assign RBAC permisisons to Service principal")
-        print("9. Exit")
-        while True:
-            try:
-                choice = input("Enter your choice: ")
-                choice = int(choice)
-                if choice in range(1, 10):
-                    return str(choice)
-                else:
-                    print("Invalid choice. Please enter a number between 1 and 9.")
-            except ValueError:
-                print("Invalid input. Please enter a number between 1 and 9.")
+In the diagram, you can see that a system-assigned identity is associated with a specific Azure resource. This identity is managed by Azure and tied to the lifecycle of the resource.
 
-    def list_sub():
-        list_subscriptions()
+On the other hand, a user-assigned identity is created separately and can be assigned to multiple Azure resources. This identity provides the resource with the ability to authenticate and access other Azure resources using the assigned identity.
 
-    def move_sub():
-        move_subscription()
-
-    def rename_sub():
-        rename_subscription()
-    
-    def resource_grp():
-        create_resource_group()
-    
-    def vnet():
-        create_vnet()
-    
-    def tag():
-        create_tags()
-    
-    def assign_aad():
-        assign_rbac_aad()
-        
-    def assign_sp():
-        assign_rbac_sp()
-        
-    
-
-    options = {
-        "1": list_sub,
-        "2": move_sub,
-        "3": rename_sub,
-        "4": resource_grp,
-        "5": vnet,
-        "6": tag,
-        "7": assign_aad,
-        "8": assign_sp,
-        "9": lambda: print("Exiting...")
-    }
-
-    while True:
-        choice = main_menu()
-        options.get(choice)()
-        if choice == "9":
-            break
-
-if __name__ == "__main__":
-    main()
+Overall, system-assigned and user-assigned identities provide different options for managing and securing access to Azure resources based on your specific requirements and use cases.
