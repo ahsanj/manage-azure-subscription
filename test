@@ -1,39 +1,108 @@
-Certainly! Here's an improved diagram illustrating the relationship between resources, system-assigned identities, and user-assigned identities in Azure:
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "rg" {
+  name     = var.resource_group_name
+  location = "eastus"
+}
+
+resource "azurerm_template_deployment" "example" {
+  name                = "graphAppDeployment"
+  resource_group_name = azurerm_resource_group.rg.name
+  deployment_mode     = "Incremental"
+
+  template_body = <<TEMPLATE
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceGroupName": {
+      "type": "string",
+      "defaultValue": "${var.resource_group_name}",
+      "metadata": {
+        "description": "Name of the resource group."
+      }
+    },
+    "graphAppName": {
+      "type": "string",
+      "defaultValue": "${var.graph_app_name}",
+      "metadata": {
+        "description": "Name of the Graph application."
+      }
+    },
+    "appId": {
+      "type": "string",
+      "metadata": {
+        "description": "GUID of the application."
+      },
+      "defaultValue": "${var.app_id}"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "${var.location_app}",
+      "metadata": {
+        "description": "Location where the resources will be created."
+      }
+    },
+    "subscriptionId": {
+      "type": "string",
+      "defaultValue": "${var.subscription_id}",
+      "metadata": {
+        "description": "GUID of the subscription."
+      }
+    }
+  },
+ "resources": [
+        {
+            "type": "Microsoft.GraphServices/accounts",
+            "apiVersion": "2022-09-22-preview",
+            "name": "[parameters('graphAppName')]",
+            "location": "Global",
+            "properties": {
+                "appId": "[parameters('appId')]""
+            }
+        }
+    ]
+}
+TEMPLATE
+}
 
 
-- The Azure Resource represents a resource in Azure, such as a virtual machine, Azure function, or any other service.
-- The System-Assigned Identity is associated with the Azure Resource, indicated by the connection between them. This identity is managed by Azure and tied to the lifecycle of the resource.
-- User-Assigned Identity 1 and User-Assigned Identity 2 are separate identities that can be created independently of any specific resource.
-- Both User-Assigned Identities can be assigned to multiple Azure Resources, as shown by the connections between the identities and the Azure Resource boxes.
-- Each User-Assigned Identity provides the associated Azure Resource(s) with the ability to authenticate and access other Azure resources using the assigned identity.
-
-This diagram visually represents the relationships between the resources and identities, showcasing the decoupled nature of user-assigned identities from specific resources while still providing authentication capabilities.
-
-Note: The diagram is a simplified representation, and in practice, there can be multiple resources associated with a single identity and vice versa. The diagram aims to illustrate the concepts of system-assigned and user-assigned identities and their relationships.
-
-    
-    Certainly! Here are more details and a diagram to further illustrate the concepts of system-assigned and user-assigned identities in Azure:
-
-System-Assigned Identity:
-- System-assigned identities are created and managed by Azure for a specific resource.
-- When you enable a system-assigned identity for a resource, Azure automatically creates an identity in Azure AD and associates it with that resource.
-- The system-assigned identity is tied to the lifecycle of the resource. If the resource is deleted, the system-assigned identity is also deleted.
-- The system-assigned identity is accessible only to the resource it is associated with and can be used by that resource to authenticate and access other Azure resources.
-- System-assigned identities are commonly used in scenarios where the resource needs to access other Azure services securely without managing and rotating credentials.
-
-User-Assigned Identity:
-- User-assigned identities are standalone Azure AD objects that can be created independently and then assigned to one or more Azure resources.
-- To create a user-assigned identity, you create it as a separate Azure AD resource, and Azure AD assigns a unique identity to it.
-- User-assigned identities are decoupled from the lifecycle of any specific resource. They can be created, managed, and deleted independently of the resources they are assigned to.
-- User-assigned identities can be assigned to multiple resources, allowing for reuse across different resources or scenarios.
-- By assigning a user-assigned identity to a resource, that resource gains the capability to authenticate and access other Azure resources using the identity.
-- User-assigned identities provide more flexibility and control, as they can be managed separately from the resources and can be assigned to different resources as needed.
-
-Here is a diagram illustrating the relationship between resources, system-assigned identities, and user-assigned identities:
 
 
-In the diagram, you can see that a system-assigned identity is associated with a specific Azure resource. This identity is managed by Azure and tied to the lifecycle of the resource.
 
-On the other hand, a user-assigned identity is created separately and can be assigned to multiple Azure resources. This identity provides the resource with the ability to authenticate and access other Azure resources using the assigned identity.
 
-Overall, system-assigned and user-assigned identities provide different options for managing and securing access to Azure resources based on your specific requirements and use cases.
+----------------
+
+
+variable "resource_group_name" {
+  description = "Name of the resource group."
+  type        = string
+  default     = ""
+}
+
+variable "graph_app_name" {
+  description = "Name of the Graph application."
+  type        = string
+  default     = "myGraphAppBilling"
+}
+
+variable "app_id" {
+  description = "GUID of the application."
+  type        = string
+  default     = ""
+}
+
+variable "location_app" {
+  description = "Location where the resources will be created."
+  type        = string
+  default     = "global"
+}
+
+variable "subscription_id" {
+  description = "GUID of the subscription."
+  type        = string
+  default     = ""
+}
+
