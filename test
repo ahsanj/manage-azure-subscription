@@ -1,101 +1,24 @@
 {
-    "id": "/subscriptions/subscription_id/resourcegroups/resource_group/providers/Microsoft.Web/sites/logic_app_name/config/authsettingsV2",
-    "name": "authsettingsV2",
-    "type": "Microsoft.Web/sites/config",
-    "location": "eastus",
-    "tags": {},
-    "properties": {
-        "platform": {
-            "enabled": true,
-            "runtimeVersion": "~1"
-        },
-        "globalValidation": {
-            "requireAuthentication": true,
-            "unauthenticatedClientAction": "AllowAnonymous"
-        },
-        "identityProviders": {
-            "azureActiveDirectory": {
-                "enabled": true,
-                "registration": {
-                    "openIdIssuer": "https://sts.windows.net/tenant_id/",
-                    "clientId": "object_id of app reg"
-                },
-                "login": {
-                    "disableWWWAuthenticate": false
-                },
-                "validation": {
-                    "jwtClaimChecks": {},
-                    "allowedAudiences": [
-                        "https://management.azure.com",
-                        "https://management.core.windows.com"
-                    ],
-                    "defaultAuthorizationPolicy": {
-                        "allowedPrincipals": {
-                            "identities": [
-                                "object_id of app reg"
-                            ]
-                        }
-                    }
-                }
-            },
-            "facebook": {
-                "enabled": false,
-                "registration": {},
-                "login": {}
-            },
-            "gitHub": {
-                "enabled": false,
-                "registration": {},
-                "login": {}
-            },
-            "google": {
-                "enabled": false,
-                "registration": {},
-                "login": {},
-                "validation": {}
-            },
-            "twitter": {
-                "enabled": false,
-                "registration": {}
-            },
-            "legacyMicrosoftAccount": {
-                "enabled": false,
-                "registration": {},
-                "login": {},
-                "validation": {}
-            },
-            "apple": {
-                "enabled": false,
-                "registration": {},
-                "login": {}
-            }
-        },
-        "login": {
-            "routes": {},
-            "tokenStore": {
-                "enabled": false,
-                "tokenRefreshExtensionHours": 72.0,
-                "fileSystem": {},
-                "azureBlobStorage": {}
-            },
-            "preserveUrlFragmentsForLogins": false,
-            "cookieExpiration": {
-                "convention": "FixedTime",
-                "timeToExpiration": "08:00:00"
-            },
-            "nonce": {
-                "validateNonce": true,
-                "nonceExpirationInterval": "00:05:00"
-            }
-        },
-        "httpSettings": {
-            "requireHttps": true,
-            "routes": {
-                "apiPrefix": "/.auth"
-            },
-            "forwardProxy": {
-                "convention": "NoProxy"
-            }
-        }
-    }
-}
+  "typ": "JWT",
+  "alg": "RS256",
+  "x5t": "-KI3Q9nNR7bRofxmeZoXqbHZGew",
+  "kid": "-KI3Q9nNR7bRofxmeZoXqbHZGew"
+}.{
+  "aud": "https://management.azure.com",
+  "iss": "https://sts.windows.net/79c7580a-c636-47fe-a6a7-0cbbe7b956b6/",
+  "iat": 1689761234,
+  "nbf": 1689761234,
+  "exp": 1689765134,
+  "aio": "E2ZgYPjmp8C24s/LZdU55i/dpLwcAA==",
+  "appid": "948f8c77-7c6d-467a-8c8d-ecf93a01a2af",
+  "appidacr": "1",
+  "idp": "https://sts.windows.net/79c7580a-c636-47fe-a6a7-0cbbe7b956b6/",
+  "idtyp": "app",
+  "oid": "1fe3299e-e089-49bd-9713-a7ddd2890305",
+  "rh": "0.AYIACljHeTbG_kempwy757lWtkZIf3kAutdPukPawfj2MBOVAAA.",
+  "sub": "1fe3299e-e089-49bd-9713-a7ddd2890305",
+  "tid": "79c7580a-c636-47fe-a6a7-0cbbe7b956b6",
+  "uti": "CLiTjdbXNUes-H-bDl4VAA",
+  "ver": "1.0",
+  "xms_tcdt": 1652567504
+}.[Signature]
