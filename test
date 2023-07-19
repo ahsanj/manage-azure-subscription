@@ -1,108 +1,101 @@
-provider "azurerm" {
-  features {}
-}
-
-resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
-  location = "eastus"
-}
-
-resource "azurerm_template_deployment" "example" {
-  name                = "graphAppDeployment"
-  resource_group_name = azurerm_resource_group.rg.name
-  deployment_mode     = "Incremental"
-
-  template_body = <<TEMPLATE
 {
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "resourceGroupName": {
-      "type": "string",
-      "defaultValue": "${var.resource_group_name}",
-      "metadata": {
-        "description": "Name of the resource group."
-      }
-    },
-    "graphAppName": {
-      "type": "string",
-      "defaultValue": "${var.graph_app_name}",
-      "metadata": {
-        "description": "Name of the Graph application."
-      }
-    },
-    "appId": {
-      "type": "string",
-      "metadata": {
-        "description": "GUID of the application."
-      },
-      "defaultValue": "${var.app_id}"
-    },
-    "location": {
-      "type": "string",
-      "defaultValue": "${var.location_app}",
-      "metadata": {
-        "description": "Location where the resources will be created."
-      }
-    },
-    "subscriptionId": {
-      "type": "string",
-      "defaultValue": "${var.subscription_id}",
-      "metadata": {
-        "description": "GUID of the subscription."
-      }
-    }
-  },
- "resources": [
-        {
-            "type": "Microsoft.GraphServices/accounts",
-            "apiVersion": "2022-09-22-preview",
-            "name": "[parameters('graphAppName')]",
-            "location": "Global",
-            "properties": {
-                "appId": "[parameters('appId')]""
+    "id": "/subscriptions/e5b2662b-7286-4408-b21b-818304e5ba67/resourcegroups/logic_app/providers/Microsoft.Web/sites/ajtestlogicapp/config/authsettingsV2",
+    "name": "authsettingsV2",
+    "type": "Microsoft.Web/sites/config",
+    "location": "eastus",
+    "tags": {},
+    "properties": {
+        "platform": {
+            "enabled": true,
+            "runtimeVersion": "~1"
+        },
+        "globalValidation": {
+            "requireAuthentication": true,
+            "unauthenticatedClientAction": "AllowAnonymous"
+        },
+        "identityProviders": {
+            "azureActiveDirectory": {
+                "enabled": true,
+                "registration": {
+                    "openIdIssuer": "https://sts.windows.net/tenant_id/",
+                    "clientId": "object_id of app reg"
+                },
+                "login": {
+                    "disableWWWAuthenticate": false
+                },
+                "validation": {
+                    "jwtClaimChecks": {},
+                    "allowedAudiences": [
+                        "https://management.azure.com",
+                        "https://management.core.windows.com"
+                    ],
+                    "defaultAuthorizationPolicy": {
+                        "allowedPrincipals": {
+                            "identities": [
+                                "object_id of app reg"
+                            ]
+                        }
+                    }
+                }
+            },
+            "facebook": {
+                "enabled": false,
+                "registration": {},
+                "login": {}
+            },
+            "gitHub": {
+                "enabled": false,
+                "registration": {},
+                "login": {}
+            },
+            "google": {
+                "enabled": false,
+                "registration": {},
+                "login": {},
+                "validation": {}
+            },
+            "twitter": {
+                "enabled": false,
+                "registration": {}
+            },
+            "legacyMicrosoftAccount": {
+                "enabled": false,
+                "registration": {},
+                "login": {},
+                "validation": {}
+            },
+            "apple": {
+                "enabled": false,
+                "registration": {},
+                "login": {}
+            }
+        },
+        "login": {
+            "routes": {},
+            "tokenStore": {
+                "enabled": false,
+                "tokenRefreshExtensionHours": 72.0,
+                "fileSystem": {},
+                "azureBlobStorage": {}
+            },
+            "preserveUrlFragmentsForLogins": false,
+            "cookieExpiration": {
+                "convention": "FixedTime",
+                "timeToExpiration": "08:00:00"
+            },
+            "nonce": {
+                "validateNonce": true,
+                "nonceExpirationInterval": "00:05:00"
+            }
+        },
+        "httpSettings": {
+            "requireHttps": true,
+            "routes": {
+                "apiPrefix": "/.auth"
+            },
+            "forwardProxy": {
+                "convention": "NoProxy"
             }
         }
-    ]
+    }
 }
-TEMPLATE
-}
-
-
-
-
-
-
-----------------
-
-
-variable "resource_group_name" {
-  description = "Name of the resource group."
-  type        = string
-  default     = ""
-}
-
-variable "graph_app_name" {
-  description = "Name of the Graph application."
-  type        = string
-  default     = "myGraphAppBilling"
-}
-
-variable "app_id" {
-  description = "GUID of the application."
-  type        = string
-  default     = ""
-}
-
-variable "location_app" {
-  description = "Location where the resources will be created."
-  type        = string
-  default     = "global"
-}
-
-variable "subscription_id" {
-  description = "GUID of the subscription."
-  type        = string
-  default     = ""
-}
-
