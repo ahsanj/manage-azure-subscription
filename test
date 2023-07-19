@@ -1,5 +1,5 @@
 {
-    "id": "/subscriptions/e5b2662b-7286-4408-b21b-818304e5ba67/resourcegroups/logic_app/providers/Microsoft.Web/sites/ajtestlogicapp/config/authsettingsV2",
+    "id": "/subscriptions/subscription_id/resourcegroups/resource_group/providers/Microsoft.Web/sites/logic_app_name/config/authsettingsV2",
     "name": "authsettingsV2",
     "type": "Microsoft.Web/sites/config",
     "location": "eastus",
