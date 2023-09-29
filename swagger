@@ -1,9 +1,1 @@
-We are quite busy with the releases but I wanted to share this idea before I forgot. Me and Boris had a discussion regarding the OpenAI usage. Boris suggested that we can only use GPT if it is private and our data is not added to LLM like ChatGPT or any other language models.On the side, I have been looking to come up with a solution where we can offer our OpenAI services to a larger group within the firm.
-I started looking at the openAI embeddings https://platform.openai.com/docs/guides/embeddings and vector databases. Both of these are essential if someone wants to build any type of AI product. OpenAI has a create way to create the embeddings but they do not offer to store them
-If we want other teams within the firm to start building their AI products on our platform, we have to offer a vector database as a service in addition to an openAI instance. Microsoft has become very active in offering vector databases on their existing products.
-They have connectors for all the major databases.
- https://learn.microsoft.com/en-us/semantic-kernel/memories/vector-db
-Use vector search on embeddings in Azure Cosmos DB
-https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/vcore/vector-search
 
-Data stored in vector databases will not be automatically added to large language models also, LLM does not have direct access to external databases.    
