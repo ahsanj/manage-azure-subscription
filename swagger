@@ -23,3 +23,5 @@ request_timeout=60,
 
 
  except openai.error.timeout
+
+https://api.python.langchain.com/en/latest/_modules/langchain/llms/openai.html
