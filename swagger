@@ -1,2 +1,25 @@
 
-https://clemenssiebler.com/posts/using-aad-for-azure-openai-service-authentication/
+
+All 5xx status codes mean server error. The problem is caused by OpenAI servers. 
+Whether you get error 500, 503 or 504, it is not your fault.
+
+https://learn.microsoft.com/en-us/answers/questions/1343026/error-upstream-request-timeout-azure-openai
+
+https://github.com/Azure/azure-sdk-for-js/issues/26243
+
+https://learn.microsoft.com/en-us/answers/questions/1331721/openai-service-timeout-issue
+https://github.com/langchain-ai/langchain/issues/3512
+
+openai.ChatCompletion.create(
+model=“gpt-3.5-turbo”,
+messages=[
+{
+“role”: “user”,
+“content”: prompt,
+}
+],
+request_timeout=60,
+)
+
+
+ except openai.error.timeout
