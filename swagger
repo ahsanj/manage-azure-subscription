@@ -1,29 +1,132 @@
 
+**Azure Enterprise Agreement Hierarchy and Management Structure**
 
-All 5xx status codes mean server error. The problem is caused by OpenAI servers. 
-Whether you get error 500, 503 or 504, it is not your fault.
+**Introduction:**
 
-https://learn.microsoft.com/en-us/answers/questions/1343026/error-upstream-request-timeout-azure-openai
+Understanding the Azure Enterprise Agreement hierarchy is crucial for the efficient management of Azure services within your organization. This structured framework allows for clear role definitions and access control. This document provides an overview of the Azure Enterprise Agreement hierarchy and its management structure.
 
-https://github.com/Azure/azure-sdk-for-js/issues/26243
+**Table of Contents:**
 
-https://learn.microsoft.com/en-us/answers/questions/1331721/openai-service-timeout-issue
-https://github.com/langchain-ai/langchain/issues/3512
+**Azure Enterprise Enrollment Hierarchy:**
 
-openai.ChatCompletion.create(
-model=“gpt-3.5-turbo”,
-messages=[
-{
-“role”: “user”,
-“content”: prompt,
-}
-],
-request_timeout=60,
-)
+***Enterprise Administrator:***
 
+**Role and Responsibilities:**
 
- except openai.error.timeout
+The Enterprise Administrator holds the highest level of access within the Azure Enterprise Agreement. Their responsibilities include:
 
-https://api.python.langchain.com/en/latest/_modules/langchain/llms/openai.html
-https://pypi.org/project/openai/
-https://api.python.langchain.com/en/latest/_modules/langchain/llms/openai.html
+- Managing accounts and account owners.
+- Managing other enterprise administrators.
+- Managing department administrators.
+- Managing notification contacts.
+- Purchasing Azure services, including reservations.
+- Viewing usage across all accounts.
+- Viewing unbilled charges across all accounts.
+- Viewing and managing all reservation orders and reservations that apply to the Enterprise Agreement.
+
+***Notification Contact:***
+
+**Role and Responsibilities:**
+
+The Notification Contact receives usage notifications related to the Azure Enterprise Enrollment, ensuring that relevant information is promptly conveyed to the responsible parties.
+
+***Department Administrator:**
+
+**Role and Responsibilities:**
+
+Department Administrators can:
+
+- Create and manage departments.
+- Create new account owners.
+- View usage details for the departments that they manage.
+- View costs, if they have the necessary permissions.
+- Multiple department administrators can be designated for each enterprise enrollment.
+
+***Account Owner:**
+
+**Role and Responsibilities:**
+
+Account Owners are responsible for:
+
+- Creating and managing subscriptions.
+- Managing service administrators.
+- Viewing usage for subscriptions.
+
+***User & Groups:**
+
+**Role and Access Control:**
+
+Users and Groups play a vital role in the organization's Azure access control. Their access is controlled by Azure Policy, which allows for the enforcement of specific rules and configurations.
+
+**Azure’s Management Structure:**
+
+***Enrollment:**
+
+**Definition:**
+
+An Enrollment represents a billing contract, often referred to as an Enterprise Agreement, through which an organization partners with Microsoft to use Azure services.
+
+**Purpose:**
+
+The Enrollment serves as the foundation of the Azure management structure and allows organizations to:
+
+- Access the Azure EA Portal for managing billing information.
+- Establish an enrollment hierarchy.
+- Consolidate billing and allocate costs to various business units, projects, and workgroups.
+- Admins use the enrollment to control Azure governance policies and accommodate organizational needs.
+- Most enterprises typically have just one Enrollment, although service providers may have multiple.
+
+***Departments:**
+
+**Definition:**
+
+Departments are optional but serve to partition Azure resources into logical units that correspond to various organizational structures.
+
+**Role and Function:**
+
+- Departments allow for the organization of Azure resources, which can correspond to business groups, development projects, and more.
+- Department administrators have management authority over groups of accounts and Azure subscriptions.
+- They help subdivide resource privileges, usage, and billing within a large organization.
+
+***Accounts:**
+
+**Definition:**
+
+An Azure account is a unique entity providing access to Azure services and subscriptions.
+
+**Access and Management:**
+
+- Users can create multiple subscriptions within an account to achieve separation for billing or management purposes.
+- The account creator is the default account administrator and controls all Azure subscriptions and the services available within an account.
+- Accounts primarily serve as a billing construct.
+
+***Subscriptions:**
+
+**Definition:**
+
+Subscriptions are where users create and consume Azure resources. They also provide mechanisms for:
+
+- Enforcing limits.
+- Controlling Azure services available to individual users and workgroups.
+- Creating unique subscriber IDs, billing locations, and groups of available resources.
+
+***Resource Group:**
+
+**Definition:**
+
+A resource group is a container that holds related resources for an Azure solution.
+
+**Function:**
+
+Resource groups help organize and manage resources for an Azure solution, allowing for more efficient control and management.
+
+***Resources:**
+
+**Definition:**
+
+Resources are individual entities managed by Azure, including virtual machines, virtual networks, and storage accounts.
+
+**Conclusion:**
+
+Understanding the Azure Enterprise Agreement hierarchy and management structure is essential for effectively managing Azure services within your organization. This structured framework ensures clear role definitions and access control, facilitating efficient resource allocation and management.
+
