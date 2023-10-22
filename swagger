@@ -45,7 +45,6 @@ In conclusion, understanding OpenAI's Azure service pricing structure is essenti
 ------------------------
 
 
-Certainly, let's delve into more details on the concept of quota management in Azure OpenAI:
 
 1. **Prerequisites:**
    - The article emphasizes the importance of having the "Cognitive Services Usages Reader" role. This role is essential for viewing and managing your quota usage in Azure OpenAI. Without it, you won't have the necessary permissions to monitor or control your quotas effectively. This role can be assigned at the subscription level in the Azure portal.
