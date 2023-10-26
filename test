@@ -1,1 +1,10 @@
+AzureActivity
+| where OperationName == "Microsoft.Sql/servers/databases/write"
+| where tostring(ActivityStatus) == "Succeeded"
+| extend resourceName = tostring(parse_url(ResourceId).Resource)
+| extend resourceType = tostring(parse_url(ResourceId).Type)
+| extend newDatabaseName = tostring(tostring(parse_url(tostring(parse_url(tostring(parse_url(parse_url(tostring(parse_url(parse_url(ResourceId).ResourceId)).Parent).ResourceId)).Parent).ResourceId)).Parent)
+| extend subscriptionName = tostring(parse_url(ResourceId).ResourceId).split("/")[2]
+| project TimeGenerated, OperationName, newDatabaseName, resourceType, resourceName, subscriptionName
+| order by TimeGenerated desc
 
