@@ -1,15 +1,11 @@
-Hub:
-The hub is the central Log Analytics workspace (East US, in our previous example).
-It serves as the main repository for all logs from various spoke regions.
-The hub provides a unified view of logs across all regions, enabling centralized monitoring, analysis, and reporting.
-Spoke Regions:
-Each spoke region (e.g., West US, North Europe, etc.) has its own local Log Analytics workspace.
-Local logs are collected, processed, and analyzed in each spoke region, allowing for real-time insights and quick decision-making.
-Each spoke region can have its own unique log collection, processing, and analysis requirements, which are addressed locally.
-Log Forwarding:
-Logs from each spoke region are forwarded to the central hub workspace.
-This ensures that all logs are stored in a single, centralized repository for long-term retention, analysis, and reporting.
-Benefits:
-The hub and spoke model enables both centralized and local log analysis, providing a comprehensive view of logs across all regions.
-Local log analysis in each spoke region allows for faster insights and decision-making.
-Centralized log management in the hub enables unified monitoring, reporting, and compliance.
+I hope this message finds you well.
+
+As previously mentioned, I may need to move back to Islamabad, Pakistan, to assist my parents with family matters while my older brother is in the UK. Unfortunately, my brother's firm has requested him to relocate to the UK, necessitating my immediate move.
+
+Please consider this email as my official resignation from my current role. My last working day will be July 30, 2024.
+
+I am grateful for the opportunities and experiences I've had here and appreciate all the support from the team. I look forward to the possibility of working together again in the future.
+
+Thank you for your understanding.
+
+Best regards,
